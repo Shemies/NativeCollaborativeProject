@@ -1,18 +1,28 @@
-import React from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList } from 'react-native';
 
 export function TodoScreen() {
+  const [todos, setTodos] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch('https://dummyjson.com/todos')
+      .then(res => res.json())
+      .then(data => setTodos(data.todos));
+  }, []);
+
   return (
-    <ScrollView 
-      className="flex-1 bg-white"
-      contentContainerStyle={{ padding: 24 }}
-    >
-      <View className="items-center justify-center">
-        <Text className="text-2xl font-bold mb-4 text-gray-800">Todo Screen</Text>
-        <Text className="text-base text-gray-600 text-center">
-          This is the Todo screen.
-        </Text>
-      </View>
-    </ScrollView>
+    <View className="flex-1 bg-white p-4">
+      <FlatList
+        data={todos}
+        keyExtractor={item => item.id.toString()}
+        renderItem={({ item }) => (
+          <View>
+            <Text className="text-base mb-2">{item.todo}</Text>
+            <Text className="text-base mb-2">{item.completed ? 'Completed' : 'Not Completed'}</Text>
+            <Text className="text-base mb-2">{item.userId}</Text>
+          </View>
+        )}
+      />
+    </View>
   );
 }
